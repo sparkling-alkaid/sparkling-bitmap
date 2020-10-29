@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <parent>
+        <groupId>org.sparkling</groupId>
+        <artifactId>bitmap-dependencies</artifactId>
+        <version>0.1.0.0</version>
+        <relativePath>./bitmap-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>sparkling-bitmap</artifactId>
+    <version>0.1.0.0</version>
+    <packaging>pom</packaging>
+
+    <name>sparkling-bitmap</name>
+    <description>sparkling-bitmap</description>
+
+    <modules>
+        <module>bitmap-dependencies</module>
+        <module>bitmap-core</module>
+    </modules>
+    
+      
+    <properties>
+        <java.version>1.8</java.version>
+        <project.encoding>UTF-8</project.encoding>
+        <project.build.encoding>UTF-8</project.build.encoding>
+        <license.maven.plugin>3.0</license.maven.plugin>
+        <maven.java.formatter.plugin>0.4</maven.java.formatter.plugin>
+        <maven.compiler.plugin>3.1</maven.compiler.plugin>
+        <maven.source.plugin>3.0.0</maven.source.plugin>
+        <maven.javadoc.plugin>2.9.1</maven.javadoc.plugin>
+        <maven.staging.plugin>1.6.7</maven.staging.plugin>
+        <maven.gpg.pluign>1.5</maven.gpg.pluign>
+        <cobertura.maven.plugin>2.6</cobertura.maven.plugin>
+        <coveralls.maven.plugin>3.1.0</coveralls.maven.plugin>
+        <main.user.dir>${user.dir}</main.user.dir>
+    </properties>
+
+    <dependencies>
+    
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.8.10</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+            <version>2.8.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.8.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.10</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+    </dependencies>
+
+
+</project>
