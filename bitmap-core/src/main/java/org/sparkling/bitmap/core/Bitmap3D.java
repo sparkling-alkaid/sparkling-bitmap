@@ -1,4 +1,4 @@
 package org.sparkling.bitmap.core;
 
-public class OneHotBitmap {
+public class Bitmap3D {
 }

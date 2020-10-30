@@ -7,13 +7,13 @@
     <parent>
         <groupId>org.sparkling</groupId>
         <artifactId>bitmap-dependencies</artifactId>
-        <version>0.1.0.0</version>
+        <version>0.0.0.0</version>
         <relativePath>./bitmap-dependencies/pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>sparkling-bitmap</artifactId>
-    <version>0.1.0.0</version>
+    <version>0.0.0.0</version>
     <packaging>pom</packaging>
 
     <name>sparkling-bitmap</name>

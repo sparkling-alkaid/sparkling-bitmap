@@ -4,30 +4,23 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.sparkling</groupId>
-	<artifactId>bitmap-core</artifactId>
-	<name>bitmap-core</name>
-	<description>bitmap-core</description>
+	<artifactId>sparkling-common-__MODULE_NAME__</artifactId>
+	<name>sparkling-common-__MODULE_NAME__</name>
+	<description>sparkling-common-__MODULE_NAME__</description>
 
 	<parent>
-		<groupId>com.glab</groupId>
-		<artifactId>bitmap-dependencies</artifactId>
+		<groupId>org.sparkling</groupId>
+		<artifactId>sparkling-spring-boot-dependencies</artifactId>
 		<version>0.0.0.0</version>
-		<relativePath>../bitmap-dependencies/pom.xml</relativePath>
+		<relativePath>../sparkling-spring-boot-dependencies/pom.xml</relativePath>
 	</parent>
-
-	<properties>
-		<apache.poi.version>4.0.0</apache.poi.version>
-	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.roaringbitmap</groupId>
-			<artifactId>RoaringBitmap</artifactId>
-		</dependency>
+
 	</dependencies>
 
 	<build>
