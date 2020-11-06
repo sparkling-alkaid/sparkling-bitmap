@@ -9,7 +9,7 @@
 	<description>bitmap-core</description>
 
 	<parent>
-		<groupId>com.glab</groupId>
+		<groupId>org.sparkling</groupId>
 		<artifactId>bitmap-dependencies</artifactId>
 		<version>0.0.0.0</version>
 		<relativePath>../bitmap-dependencies/pom.xml</relativePath>
@@ -27,6 +27,11 @@
 		<dependency>
 			<groupId>org.roaringbitmap</groupId>
 			<artifactId>RoaringBitmap</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
 		</dependency>
 	</dependencies>
 
