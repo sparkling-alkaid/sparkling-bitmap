@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 
-public interface BitmapLike extends Serializable, Cloneable, Iterable<Integer> {
+public interface BitmapLike extends Serializable, Cloneable, Iterable<Long> {
 
     void dump(OutputStream outputStream) throws IOException;
 

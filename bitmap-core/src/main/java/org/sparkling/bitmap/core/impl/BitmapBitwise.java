@@ -1,8 +1,11 @@
-package org.sparkling.bitmap.core;
+package org.sparkling.bitmap.core.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
+import org.sparkling.bitmap.core.BitmapConst;
+import org.sparkling.bitmap.core.BitmapUnit;
+import org.sparkling.bitmap.core.IBitmap2D;
 import org.sparkling.bitmap.utils.BitmapUtils;
 import org.sparkling.bitmap.utils.Bitmaps;
 
@@ -145,26 +148,6 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
     @Override
     public Iterator<Integer> iterator() {
         return notNullBitmap.iterator();
-    }
-
-    @Override
-    public void or(BitmapBitwise bitmapUnit) {
-        // this method has no meaning in this type of bitmap, do nothing
-    }
-
-    @Override
-    public void and(BitmapBitwise bitmapUnit) {
-        // this method has no meaning in this type of bitmap, do nothing
-    }
-
-    @Override
-    public void andNot(BitmapBitwise bitmapUnit) {
-        // this method has no meaning in this type of bitmap, do nothing
-    }
-
-    @Override
-    public void xor(BitmapBitwise bitmapUnit) {
-        // this method has no meaning in this type of bitmap, do nothing
     }
 
     @Override

@@ -1,6 +1,9 @@
-package org.sparkling.bitmap.core;
+package org.sparkling.bitmap.core.impl;
 
 
+import org.sparkling.bitmap.core.BitmapConst;
+import org.sparkling.bitmap.core.BitmapUnit;
+import org.sparkling.bitmap.core.CalculatableBitmap;
 import org.sparkling.bitmap.utils.BitmapUtils;
 import org.sparkling.bitmap.utils.Bitmaps;
 
@@ -9,7 +12,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-public class BitmapOneHot implements IBitmap<BitmapOneHot> {
+public class BitmapOneHot implements CalculatableBitmap<BitmapOneHot> {
 
     private String name;
     private BitmapUnit unit;
@@ -71,7 +74,7 @@ public class BitmapOneHot implements IBitmap<BitmapOneHot> {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<Long> iterator() {
         return unit.iterator();
     }
 
@@ -100,5 +103,7 @@ public class BitmapOneHot implements IBitmap<BitmapOneHot> {
     public boolean contains(int index) {
         return this.unit.contains(index);
     }
+
+
 
 }

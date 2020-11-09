@@ -2,6 +2,7 @@ package org.sparkling.bitmap.core.impl;
 
 import org.roaringbitmap.PeekableIntIterator;
 import org.roaringbitmap.RoaringBitmap;
+import org.sparkling.bitmap.core.BitmapConst;
 import org.sparkling.bitmap.core.BitmapUnit;
 
 import java.io.*;
@@ -111,11 +112,11 @@ public class BitmapUnitImpl implements BitmapUnit {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<Long> iterator() {
         return new IntIterator(roaringBitmap.getIntIterator());
     }
 
-    private static class IntIterator implements Iterator<Integer> {
+    private static class IntIterator implements Iterator<Long> {
 
         private PeekableIntIterator intIterator;
 
@@ -129,8 +130,8 @@ public class BitmapUnitImpl implements BitmapUnit {
         }
 
         @Override
-        public Integer next() {
-            return intIterator.next();
+        public Long next() {
+            return (long) intIterator.next();
         }
 
     }
@@ -168,6 +169,11 @@ public class BitmapUnitImpl implements BitmapUnit {
     @Override
     public int serializedSizeInBytes() {
         return roaringBitmap.serializedSizeInBytes() + Integer.BYTES;
+    }
+
+    @Override
+    public Integer bitmapType() {
+        return BitmapConst.BITMAP_TYPE_UNIT;
     }
 
 }

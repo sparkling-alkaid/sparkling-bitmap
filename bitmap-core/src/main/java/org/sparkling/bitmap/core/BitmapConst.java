@@ -7,6 +7,7 @@ package org.sparkling.bitmap.core;
  */
 public class BitmapConst {
 
+    public static final Integer BITMAP_TYPE_UNIT = 0;
     public static final Integer BITMAP_TYPE_ONEHOT = 1;
     public static final Integer BITMAP_TYPE_BITWISE = 2;
 

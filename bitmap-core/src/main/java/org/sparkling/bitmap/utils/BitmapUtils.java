@@ -3,6 +3,7 @@ package org.sparkling.bitmap.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 public class BitmapUtils {
 
@@ -29,6 +30,10 @@ public class BitmapUtils {
 
     public static InputStream bitmapLoadInStream(InputStream parent){
         return new NonCloseInternalIS(parent);
+    }
+
+    public static Iterator<Long> wrapLongIter(Iterator<Integer> it){
+        return new LongIteratorWrapper(it);
     }
 
 
@@ -71,6 +76,26 @@ public class BitmapUtils {
             super.close();
             parent.flush();
             parent = null;
+        }
+
+    }
+
+    private static class LongIteratorWrapper implements Iterator<Long>{
+
+        private Iterator<Integer> inner;
+
+        public LongIteratorWrapper(Iterator<Integer> inner) {
+            this.inner = inner;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return inner.hasNext();
+        }
+
+        @Override
+        public Long next() {
+            return inner.next().longValue();
         }
 
     }

@@ -1,7 +1,7 @@
 package org.sparkling.bitmap.core;
 
-public interface BitmapLoader {
+public interface BitmapLoader<T> {
     
-    IBitmap load(String bitmapName);
+    T load(String bitmapName);
 
 }

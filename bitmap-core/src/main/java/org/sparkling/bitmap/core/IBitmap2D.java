@@ -1,6 +1,6 @@
 package org.sparkling.bitmap.core;
 
-public interface IBitmap2D<T> extends IBitmap<T>{
+public interface IBitmap2D<T> extends ComparableBitmap<T>{
 
     /**
      * 添加二维数值
