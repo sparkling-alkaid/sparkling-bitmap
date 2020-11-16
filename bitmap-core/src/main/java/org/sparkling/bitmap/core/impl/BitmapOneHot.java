@@ -79,14 +79,10 @@ public class BitmapOneHot implements CalculatableBitmap<BitmapOneHot> {
     }
 
     @Override
-    public int cardinality() {
+    public long cardinality() {
         return unit.cardinality();
     }
 
-    @Override
-    public int[] toArray() {
-        return unit.toArray();
-    }
 
     @Override
     public void setName(String name) {

@@ -1,9 +1,13 @@
 package org.sparkling.bitmap.core;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.List;
 
 public interface BitmapLike extends Serializable, Cloneable, Iterable<Long> {
 
@@ -17,8 +21,10 @@ public interface BitmapLike extends Serializable, Cloneable, Iterable<Long> {
 
     boolean contains(int index);
 
-    int cardinality();
+    long cardinality();
 
-    int[] toArray();
+    default List<Long> getIndexList(int limit){
+        return Lists.newArrayList(Iterables.limit(this, limit));
+    }
 
 }

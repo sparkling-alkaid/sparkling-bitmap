@@ -1,16 +1,14 @@
 package org.sparkling.bitmap.core;
 
-import org.roaringbitmap.RoaringBitmap;
-
 
 /**
  * Bitmap最小运算单位
  */
-public interface BitmapUnit extends BitmapLike, Named, CalculatableBitmap<BitmapUnit> {
+public interface BitmapUnit<T> extends BitmapLike, Named, CalculatableBitmap<BitmapUnit<T>> {
 
-    RoaringBitmap internal();
+    T internal();
 
-    BitmapUnit copy();
+    BitmapUnit<T> copy();
 
     int serializedSizeInBytes();
 

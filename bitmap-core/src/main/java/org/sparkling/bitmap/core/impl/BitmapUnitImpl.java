@@ -14,8 +14,7 @@ import java.util.Objects;
  * @author sparkling_alkaid
  * @since 2020-11-04
  */
-public class BitmapUnitImpl implements BitmapUnit {
-
+public class BitmapUnitImpl implements BitmapUnit<RoaringBitmap> {
 
     private String name;
 
@@ -38,7 +37,7 @@ public class BitmapUnitImpl implements BitmapUnit {
     public void dump(OutputStream os) throws IOException {
         roaringBitmap.runOptimize();
         try (DataOutputStream dos = new DataOutputStream(os)) {
-            dos.write(roaringBitmap.serializedSizeInBytes());
+            dos.writeInt(roaringBitmap.serializedSizeInBytes());
             roaringBitmap.serialize(dos);
         }
     }
@@ -67,34 +66,30 @@ public class BitmapUnitImpl implements BitmapUnit {
     }
 
     @Override
-    public void or(BitmapUnit bitmapUnit) {
+    public void or(BitmapUnit<RoaringBitmap> bitmapUnit) {
         roaringBitmap.or(bitmapUnit.internal());
     }
 
     @Override
-    public void and(BitmapUnit bitmapUnit) {
+    public void and(BitmapUnit<RoaringBitmap> bitmapUnit) {
         roaringBitmap.and(bitmapUnit.internal());
     }
 
     @Override
-    public void andNot(BitmapUnit bitmapUnit) {
+    public void andNot(BitmapUnit<RoaringBitmap> bitmapUnit) {
         roaringBitmap.andNot(bitmapUnit.internal());
     }
 
     @Override
-    public void xor(BitmapUnit bitmapUnit) {
+    public void xor(BitmapUnit<RoaringBitmap> bitmapUnit) {
         roaringBitmap.xor(bitmapUnit.internal());
     }
 
     @Override
-    public int cardinality() {
+    public long cardinality() {
         return roaringBitmap.getCardinality();
     }
 
-    @Override
-    public int[] toArray() {
-        return roaringBitmap.toArray();
-    }
 
     @Override
     public RoaringBitmap internal() {
@@ -102,7 +97,7 @@ public class BitmapUnitImpl implements BitmapUnit {
     }
 
     @Override
-    public BitmapUnit copy() {
+    public BitmapUnit<RoaringBitmap> copy() {
         try {
             return clone();
         } catch (CloneNotSupportedException e) {
@@ -160,7 +155,7 @@ public class BitmapUnitImpl implements BitmapUnit {
     }
 
     @Override
-    protected BitmapUnit clone() throws CloneNotSupportedException {
+    protected BitmapUnit<RoaringBitmap> clone() throws CloneNotSupportedException {
         BitmapUnitImpl ret = new BitmapUnitImpl();
         ret.roaringBitmap = this.roaringBitmap.clone();
         return ret;

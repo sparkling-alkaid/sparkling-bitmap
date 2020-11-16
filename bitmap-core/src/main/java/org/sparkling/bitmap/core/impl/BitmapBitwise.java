@@ -131,14 +131,10 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
     }
 
     @Override
-    public int cardinality() {
+    public long cardinality() {
         return notNullBitmap.cardinality();
     }
 
-    @Override
-    public int[] toArray() {
-        return notNullBitmap.toArray();
-    }
 
     @Override
     public Integer bitmapType() {
@@ -146,7 +142,7 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
     }
 
     @Override
-    public Iterator<Integer> iterator() {
+    public Iterator<Long> iterator() {
         return notNullBitmap.iterator();
     }
 

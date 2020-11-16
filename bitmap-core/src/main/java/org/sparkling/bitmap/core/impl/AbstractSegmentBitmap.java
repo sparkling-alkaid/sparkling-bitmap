@@ -1,6 +1,8 @@
 
 package com.sparkling.bitmap.core.impl;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Maps;
 import org.sparkling.bitmap.core.IBitmap;
 import org.sparkling.bitmap.core.SegBitmapLoader;
 import org.sparkling.bitmap.core.SegmentedBitmap;
@@ -10,10 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
- * bitmap分段
+ * bitmap分段, 横向拆分
  *
  * @author sparkling_alkaid
  * @since 2020-11-09
@@ -40,7 +43,8 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
         this.bitmapType = bitmapType;
         this.segCount = segCount;
         this.step = step;
-        this.bitmapMap = bitmapMap;
+        this.bitmapMap = Maps.newHashMapWithExpectedSize(bitmapMap.size());
+        this.bitmapMap.putAll(bitmapMap);
         this.loaded = true;
     }
 
@@ -102,7 +106,7 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
 
     @Override
     public void add(int[] index) {
-        for(int id: index){
+        for (int id : index) {
             add(id);
         }
     }
@@ -115,22 +119,32 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
 
     @Override
     public void add(long index) {
-
+        getBitmapSeg(segNo(index)).add(indexInSeg(index));
     }
 
     @Override
-    public void add(long[] index) {
-
+    public void add(long[] indexArr) {
+        for (long index : indexArr) {
+            add(index);
+        }
     }
 
     @Override
     public boolean contains(long index) {
-        return false;
+        return getBitmapSeg(segNo(index)).contains(indexInSeg(index));
+    }
+
+    private int segNo(long index) {
+        return (int) (index / step);
+    }
+
+    private int indexInSeg(long index) {
+        return (int) (index % step);
     }
 
     @Override
     public long longCardinality() {
-        return getBitmapList().stream().map(b -> Integer.toUnsignedLong(b.cardinality())).reduce((x, y) -> x + y).get();
+        return getBitmapList().stream().map(b -> b.cardinality()).reduce((x, y) -> x + y).get();
     }
 
     private int getSegByIndex(Long index) {
@@ -138,19 +152,42 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
     }
 
     @Override
-    public int cardinality() {
+    public long cardinality() {
         return getBitmapList().stream().map(IBitmap::cardinality).reduce((x, y) -> x + y).get();
     }
 
-    // 这个方法不常用,先不实现
-    @Override
-    public int[] toArray() {
-        return new int[0];
-    }
 
     @Override
     public Iterator<Long> iterator() {
-        return null;
+        List<Integer> segNumbers = bitmapMap.keySet().stream().filter(a -> a >= 0).collect(Collectors.toList());
+        List<Iterator<Long>> iterators = new ArrayList<>(segNumbers.size());
+        for (Integer segNo : segNumbers) {
+            iterators.add(new AddStepIterator(step * segNo, bitmapMap.get(segNo).iterator()));
+        }
+        return Iterators.concat(iterators.iterator());
+    }
+
+
+    private class AddStepIterator implements Iterator<Long> {
+
+        private long step;
+        private Iterator<Long> wrapped;
+
+        public AddStepIterator(long step, Iterator<Long> wrapped) {
+            this.step = step;
+            this.wrapped = wrapped;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return wrapped.hasNext();
+        }
+
+        @Override
+        public Long next() {
+            return step + wrapped.next();
+        }
+
     }
 
     @Override

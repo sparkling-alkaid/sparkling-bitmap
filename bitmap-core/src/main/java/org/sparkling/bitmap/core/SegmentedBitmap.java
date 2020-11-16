@@ -1,7 +1,5 @@
 package org.sparkling.bitmap.core;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
-
 import java.util.List;
 import java.util.Map;
 
