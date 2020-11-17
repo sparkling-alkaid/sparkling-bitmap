@@ -102,5 +102,12 @@ public class BitmapOneHot implements CalculatableBitmap<BitmapOneHot>, IBitmap {
     }
 
 
+    @Override
+    public BitmapOneHot clone() throws CloneNotSupportedException {
+        BitmapOneHot ret = new BitmapOneHot();
+        ret.name = name();
+        ret.unit = unit.copy();
+        return ret;
+    }
 
 }
