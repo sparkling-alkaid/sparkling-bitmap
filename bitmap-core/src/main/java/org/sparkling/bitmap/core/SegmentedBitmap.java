@@ -3,11 +3,11 @@ package org.sparkling.bitmap.core;
 import java.util.List;
 import java.util.Map;
 
-public interface SegmentedBitmap extends IBitmap<SegmentedBitmap>, Named{
+public interface SegmentedBitmap<T extends IBitmap> extends IBitmap, Named{
 
     Integer bitmapType();
 
-    IBitmap getBitmapSeg(int segNo);
+    T getBitmapSeg(int segNo);
 
     Long step();
 
@@ -19,8 +19,8 @@ public interface SegmentedBitmap extends IBitmap<SegmentedBitmap>, Named{
 
     long longCardinality();
 
-    List<? extends IBitmap> getBitmapList();
+    List<T> getBitmapList();
 
-    Map<Integer, ? extends IBitmap> getBitmapMap();
+    Map<Integer, T> getBitmapMap();
 
 }

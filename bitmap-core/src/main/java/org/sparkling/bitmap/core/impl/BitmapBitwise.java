@@ -18,7 +18,7 @@ import java.util.*;
  * @author sparkling_alkaid
  * @since 2020-11-06
  */
-public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
+public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
 
     private String name;
 
@@ -115,11 +115,11 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
         }
     }
 
-    private char[] intValToCharArr(int value, int size) {
+    private char[] intValToCharArr(long value, int size) {
         if (numberValueArr != null) {
             return numberValueArr;
         }
-        String binary = Integer.toBinaryString(value);
+        String binary = Long.toBinaryString(value);
         String fullBinary = Strings.padStart(binary, size, '0');
         numberValueArr = fullBinary.toCharArray();
         return numberValueArr;
@@ -172,15 +172,40 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
     }
 
 
-    public BitmapUnit gte(int value) {
+    @Override
+    public BitmapUnit gteAsCalc(long value) {
+        return gte(value);
+    }
+
+    @Override
+    public BitmapUnit gtAsCalc(long value) {
+        return gt(value);
+    }
+
+    @Override
+    public BitmapUnit eqAsCalc(long value) {
+        return eq(value);
+    }
+
+    @Override
+    public BitmapUnit ltAsCalc(long value) {
+        return lt(value);
+    }
+
+    @Override
+    public BitmapUnit lteAsCalc(long value) {
+        return lte(value);
+    }
+
+    public BitmapUnit gte(long value) {
         return Bitmaps.unitAndNot(notNullBitmap, lt(value));
     }
 
-    public BitmapUnit gt(int value) {
+    public BitmapUnit gt(long value) {
         return Bitmaps.unitAndNot(notNullBitmap, lte(value));
     }
 
-    public BitmapUnit eq(int value) {
+    public BitmapUnit eq(long value) {
         char[] chars = intValToCharArr(value, size);
         BitmapUnit ret = null;
         BitmapUnit bitmapUnit = null;
@@ -203,11 +228,11 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise> {
         return ret;
     }
 
-    public BitmapUnit lte(int value) {
+    public BitmapUnit lte(long value) {
         return lt(value + 1);
     }
 
-    public BitmapUnit lt(int value) {
+    public BitmapUnit lt(long value) {
         char[] chars = intValToCharArr(value, size);
         List<BitmapCalcUnit> list = new LinkedList<>();
         List<BitmapUnit> collects = new LinkedList<>();

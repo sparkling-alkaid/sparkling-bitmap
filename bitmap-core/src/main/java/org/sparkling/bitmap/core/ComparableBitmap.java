@@ -1,15 +1,26 @@
 package org.sparkling.bitmap.core;
 
-public interface ComparableBitmap<T> extends IBitmap<T> {
+public interface ComparableBitmap<T, CALC extends CalculatableBitmap> extends IBitmap{
 
-    Iterable<Integer> gte(int value);
+    Iterable<Long> gte(long value);
 
-    Iterable<Integer> gt(int value);
+    Iterable<Long> gt(long value);
 
-    Iterable<Integer> eq(int value);
+    Iterable<Long> eq(long value);
 
-    Iterable<Integer> lt(int value);
+    Iterable<Long> lt(long value);
 
-    Iterable<Integer> lte(int value);
+    Iterable<Long> lte(long value);
+
+    CALC gteAsCalc(long value);
+
+    CALC gtAsCalc(long value);
+
+    CALC eqAsCalc(long value);
+
+    CALC ltAsCalc(long value);
+
+    CALC lteAsCalc(long value);
+
 
 }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public interface IBitmap<T> extends BitmapLike, Named{
+public interface IBitmap extends BitmapLike, Named{
 
     /**
      * 仅序列话bitmap内部存储结构，序列化结构

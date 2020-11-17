@@ -1,6 +1,6 @@
 package org.sparkling.bitmap.core;
 
-public interface CalculatableBitmap<T> extends IBitmap<T> {
+public interface CalculatableBitmap<T> extends IBitmap{
 
     void or(T bitmapUnit);
 

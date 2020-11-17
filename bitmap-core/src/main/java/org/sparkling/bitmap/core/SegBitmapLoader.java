@@ -1,7 +1,7 @@
 package org.sparkling.bitmap.core;
 
-public interface SegBitmapLoader<T extends SegmentedBitmap> extends BitmapLoader{
+public interface SegBitmapLoader<T extends IBitmap> extends BitmapLoader<T>{
 
-    IBitmap loadSegment(String name, Integer segIndex);
+    T loadSegment(String name, Integer segIndex);
 
 }

@@ -1,10 +1,10 @@
 
-package com.sparkling.bitmap.core.impl;
+package org.sparkling.bitmap.core.impl;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
 import org.sparkling.bitmap.core.IBitmap;
-import org.sparkling.bitmap.core.SegBitmapLoader;
 import org.sparkling.bitmap.core.SegmentedBitmap;
 
 import javax.annotation.concurrent.NotThreadSafe;
@@ -22,43 +22,31 @@ import java.util.stream.Collectors;
  * @since 2020-11-09
  */
 @NotThreadSafe
-public class AbstractSegmentBitmap implements SegmentedBitmap {
+public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> {
 
     private String name;
     private Integer bitmapType;
     private Integer segCount;
     private Long step;
-    private Map<Integer, IBitmap> bitmapMap;
-    private SegBitmapLoader<? extends IBitmap> bitmapLoader;
-    private boolean loaded;
+    private Map<Integer, T> bitmapMap;
 
-    public AbstractSegmentBitmap(String name, SegBitmapLoader<? extends IBitmap> bitmapLoader) {
-        this.name = name;
-        this.bitmapLoader = bitmapLoader;
-        this.loaded = false;
-    }
-
-    public AbstractSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step, Map<Integer, ? extends IBitmap> bitmapMap) {
+    protected BaseSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step){
         this.name = name;
         this.bitmapType = bitmapType;
         this.segCount = segCount;
         this.step = step;
         this.bitmapMap = Maps.newHashMapWithExpectedSize(bitmapMap.size());
+    }
+
+    public BaseSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step, Map<Integer, T> bitmapMap) {
+        this(name, bitmapType, segCount, step);
         this.bitmapMap.putAll(bitmapMap);
-        this.loaded = true;
     }
 
-    private boolean isLoaded() {
-        if (loaded) {
-            return true;
-        }
-        if (bitmapMap != null && bitmapMap.size() == segCount) {
-            loaded = true;
-            return true;
-        }
-        return false;
-    }
 
+    protected Integer getSegCount(){
+        return segCount;
+    }
 
     @Override
     public Integer bitmapType() {
@@ -66,18 +54,16 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
     }
 
     @Override
-    public IBitmap getBitmapSeg(int segNo) {
-        if (isLoaded() || bitmapMap.containsKey(segNo)) {
+    public T getBitmapSeg(int segNo) {
+        if (bitmapMap.containsKey(segNo)) {
             return bitmapMap.get(segNo);
         }
-        IBitmap bitmap = bitmapLoader.loadSegment(name, segNo);
-        bitmapMap.put(segNo, bitmap);
-        return bitmap;
+        return null;
     }
 
     @Override
-    public List<? extends IBitmap> getBitmapList() {
-        List<IBitmap> ret = new ArrayList<>(segCount);
+    public List<T> getBitmapList() {
+        List<T> ret = new ArrayList<>(segCount);
         for (int i = 0; i < segCount; i++) {
             ret.add(getBitmapSeg(i));
         }
@@ -85,7 +71,7 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
     }
 
     @Override
-    public Map<Integer, ? extends IBitmap> getBitmapMap() {
+    public Map<Integer, T> getBitmapMap() {
         return bitmapMap;
     }
 
@@ -159,22 +145,55 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
 
     @Override
     public Iterator<Long> iterator() {
-        List<Integer> segNumbers = bitmapMap.keySet().stream().filter(a -> a >= 0).collect(Collectors.toList());
+        return makeIterators((segNo, bitmapSeg) -> new AddOffsetIterator(step * segNo, bitmapSeg.iterator()));
+    }
+
+
+    protected List<Integer> getSegNumbers(){
+        return bitmapMap.keySet().stream().filter(a -> a >= 0).collect(Collectors.toList());
+    }
+
+    protected Iterator<Long> makeIterators(SegmentOperation<Iterator<Long>> operation){
+        List<Integer> segNumbers = getSegNumbers();
         List<Iterator<Long>> iterators = new ArrayList<>(segNumbers.size());
         for (Integer segNo : segNumbers) {
-            iterators.add(new AddStepIterator(step * segNo, bitmapMap.get(segNo).iterator()));
+            iterators.add(operation.apply(segNo, getBitmapSeg(segNo)));
         }
         return Iterators.concat(iterators.iterator());
     }
 
+    protected Iterable<Long> makeIterables(SegmentOperation<Iterable<Long>> operation){
+        List<Integer> segNumbers = getSegNumbers();
+        List<Iterable<Long>> iterables = new ArrayList<>(segNumbers.size());
+        for (Integer segNo : segNumbers) {
+            iterables.add(operation.apply(segNo, getBitmapSeg(segNo)));
+        }
+        return Iterables.concat(iterables);
+    }
 
-    private class AddStepIterator implements Iterator<Long> {
+    protected void segOperations(SegmentOperation<?> operation){
+        List<Integer> segNumbers = getSegNumbers();
+        for (Integer segNo : segNumbers) {
+            operation.apply(segNo, getBitmapSeg(segNo));
+        }
+    }
 
-        private long step;
+
+
+    @FunctionalInterface
+    public interface SegmentOperation<S> {
+
+        S apply(int segNo, IBitmap bitmapSeg);
+
+    }
+
+    protected class AddOffsetIterator implements Iterator<Long> {
+
+        private long offset;
         private Iterator<Long> wrapped;
 
-        public AddStepIterator(long step, Iterator<Long> wrapped) {
-            this.step = step;
+        public AddOffsetIterator(long offset, Iterator<Long> wrapped) {
+            this.offset = offset;
             this.wrapped = wrapped;
         }
 
@@ -185,7 +204,7 @@ public class AbstractSegmentBitmap implements SegmentedBitmap {
 
         @Override
         public Long next() {
-            return step + wrapped.next();
+            return offset + wrapped.next();
         }
 
     }

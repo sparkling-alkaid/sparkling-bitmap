@@ -4,6 +4,7 @@ package org.sparkling.bitmap.core.impl;
 import org.sparkling.bitmap.core.BitmapConst;
 import org.sparkling.bitmap.core.BitmapUnit;
 import org.sparkling.bitmap.core.CalculatableBitmap;
+import org.sparkling.bitmap.core.IBitmap;
 import org.sparkling.bitmap.utils.BitmapUtils;
 import org.sparkling.bitmap.utils.Bitmaps;
 
@@ -12,7 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
-public class BitmapOneHot implements CalculatableBitmap<BitmapOneHot> {
+public class BitmapOneHot implements CalculatableBitmap<BitmapOneHot>, IBitmap {
 
     private String name;
     private BitmapUnit unit;

@@ -11,19 +11,31 @@ public class Bitmaps {
     }
 
     public static BitmapUnit unitOr(BitmapUnit unit1, BitmapUnit unit2){
-        return new BitmapUnitImpl(RoaringBitmap.or(unit1.internal(), unit2.internal()));
+        if(unit1.internal() instanceof RoaringBitmap){
+            return new BitmapUnitImpl(RoaringBitmap.or((RoaringBitmap) unit1.internal(), (RoaringBitmap) unit2.internal()));
+        }
+        return newEmptyBitmapUnit();
     }
 
     public static BitmapUnit unitAnd(BitmapUnit unit1, BitmapUnit unit2){
-        return new BitmapUnitImpl(RoaringBitmap.and(unit1.internal(), unit2.internal()));
+        if(unit1.internal() instanceof RoaringBitmap){
+            return new BitmapUnitImpl(RoaringBitmap.and((RoaringBitmap) unit1.internal(), (RoaringBitmap) unit2.internal()));
+        }
+        return newEmptyBitmapUnit();
     }
 
     public static BitmapUnit unitXor(BitmapUnit unit1, BitmapUnit unit2){
-        return new BitmapUnitImpl(RoaringBitmap.xor(unit1.internal(), unit2.internal()));
+        if(unit1.internal() instanceof RoaringBitmap){
+            return new BitmapUnitImpl(RoaringBitmap.xor((RoaringBitmap) unit1.internal(), (RoaringBitmap) unit2.internal()));
+        }
+        return newEmptyBitmapUnit();
     }
 
     public static BitmapUnit unitAndNot(BitmapUnit unit1, BitmapUnit unit2){
-        return new BitmapUnitImpl(RoaringBitmap.andNot(unit1.internal(), unit2.internal()));
+        if(unit1.internal() instanceof RoaringBitmap){
+            return new BitmapUnitImpl(RoaringBitmap.andNot((RoaringBitmap) unit1.internal(), (RoaringBitmap) unit2.internal()));
+        }
+        return newEmptyBitmapUnit();
     }
 
 
