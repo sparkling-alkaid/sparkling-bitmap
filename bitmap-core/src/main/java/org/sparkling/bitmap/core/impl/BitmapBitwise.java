@@ -30,6 +30,11 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
 
     private char[] numberValueArr;
 
+    public BitmapBitwise() {
+        this(0);
+    }
+
+    // size better lt 64
     public BitmapBitwise(int size) {
         this.notNullBitmap = Bitmaps.newEmptyBitmapUnit();
         this.bitmapMap = new HashMap<>((int) ((size + 1) / 0.75) + 1);
@@ -47,6 +52,15 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
         this.size = bitmapMap.size();
     }
 
+
+    public static BitmapBitwise bitmapBitwiseWithExpectedMaxValue(int maxValue) {
+        return new BitmapBitwise(expectedSize(maxValue));
+    }
+
+    private static int expectedSize(int max) {
+        return Long.toBinaryString(max).length();
+    }
+
     /**
      * 格式 bitmapType(2字节)+size（4字节）+ 一个长度为size+1的list[bitIndex(四字节)+bitmap长度（4字节）+bitmap数组]
      *
@@ -57,16 +71,16 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
     public void dump(OutputStream outputStream) throws IOException {
         outputStream.write(BitmapUtils.convertBitmapType(bitmapType()));
         outputStream.write(Ints.toByteArray(size));
-        writeBitmap(outputStream, -1, notNullBitmap);
-        for (Integer index : bitmapMap.keySet()) {
-            writeBitmap(outputStream, index, bitmapMap.get(index));
+        writeBitmap(outputStream, (byte) -1, notNullBitmap);
+        for (int index : bitmapMap.keySet()) {
+            writeBitmap(outputStream, (byte)index, bitmapMap.get(index));
         }
     }
 
-    private void writeBitmap(OutputStream os, int bitmapIndex, BitmapUnit unit) throws IOException {
+    private void writeBitmap(OutputStream os, byte bitmapIndex, BitmapUnit unit) throws IOException {
         try (OutputStream bos = BitmapUtils.bitmapDumpOutStream(os)) {
             bos.write(bitmapIndex);
-            unit.dump(bos);
+            unit.dump(BitmapUtils.bitmapDumpOutStream(bos));
         }
     }
 
@@ -78,10 +92,24 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
         if (!bitmapType().equals(BitmapUtils.parseBitmapType(type))) {
             throw new IOException("Bitmap type dis-match");
         }
-        size = inputStream.read();
+        byte[] sizeArr = new byte[4];
+        inputStream.read(sizeArr);
+        size = Ints.fromByteArray(sizeArr);
+        for (int i = 0; i <= size; i++) {
+            byte index = (byte)inputStream.read();
+            if (index == -1) {
+                notNullBitmap = Bitmaps.newEmptyBitmapUnit();
+                notNullBitmap.load(BitmapUtils.bitmapLoadInStream(inputStream));
+            }else{
+                BitmapUnit unit = Bitmaps.newEmptyBitmapUnit();
+                unit.load(BitmapUtils.bitmapLoadInStream(inputStream));
+                bitmapMap.put((int)index, unit);
+            }
+        }
+
     }
 
-    public void clear(){
+    public void clear() {
         notNullBitmap = null;
         bitmapMap = new HashMap<>();
         size = 0;
@@ -116,13 +144,9 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
     }
 
     private char[] intValToCharArr(long value, int size) {
-        if (numberValueArr != null) {
-            return numberValueArr;
-        }
         String binary = Long.toBinaryString(value);
         String fullBinary = Strings.padStart(binary, size, '0');
-        numberValueArr = fullBinary.toCharArray();
-        return numberValueArr;
+        return fullBinary.toCharArray();
     }
 
     @Override
@@ -210,7 +234,7 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
         BitmapUnit ret = null;
         BitmapUnit bitmapUnit = null;
         for (int i = 0; i < chars.length; i++) {
-            bitmapUnit = getBitmapAtIndex(size - 1 - i);
+            bitmapUnit = getBitmapAtIndex(i);
             if (chars[i] == '1') {
                 bitmapUnit = Bitmaps.unitAndNot(notNullBitmap, bitmapUnit);
                 if (ret == null) {
@@ -240,17 +264,17 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
         for (int i = 0; i < chars.length; i++) {
             if (charPrevChar == null) {
                 charPrevChar = chars[i];
-                collects.add(getBitmapAtIndex(size - 1 - i));
+                collects.add(getBitmapAtIndex(i));
             } else {
                 if (chars[i] == charPrevChar) {
-                    collects.add(getBitmapAtIndex(size - 1 - i));
+                    collects.add(getBitmapAtIndex(i));
                 } else if (chars[i] != charPrevChar) {
                     // do merge
                     BitmapCalcUnit calc = makeRaw(charPrevChar, collects);
                     list.add(calc);
                     collects = new LinkedList<>();
                     charPrevChar = chars[i];
-                    collects.add(getBitmapAtIndex(size - 1 - i));
+                    collects.add(getBitmapAtIndex(i));
                 }
                 if (i == chars.length - 1) {
                     // do merge

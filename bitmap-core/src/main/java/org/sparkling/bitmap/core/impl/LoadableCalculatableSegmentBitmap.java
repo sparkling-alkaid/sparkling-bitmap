@@ -6,7 +6,7 @@ import org.sparkling.bitmap.core.SegBitmapLoader;
 
 import java.util.List;
 
-public class LoadableCalculatableSegmentBitmap extends LazyLoadSegmentBitmap<CalculatableBitmap> implements CalculatableBitmap<CalculatableSegBitmap> {
+public class LoadableCalculatableSegmentBitmap extends LoadableSegmentBitmap<CalculatableBitmap> implements CalculatableBitmap<CalculatableSegBitmap> {
 
     public LoadableCalculatableSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step, SegBitmapLoader<CalculatableBitmap> bitmapLoader) {
         super(name, bitmapType, segCount, step, bitmapLoader);

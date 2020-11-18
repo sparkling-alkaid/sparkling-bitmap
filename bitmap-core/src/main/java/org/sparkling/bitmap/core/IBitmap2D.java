@@ -9,4 +9,5 @@ public interface IBitmap2D<T, RET extends CalculatableBitmap> extends Comparable
      */
     void add(int index, int value);
 
+
 }

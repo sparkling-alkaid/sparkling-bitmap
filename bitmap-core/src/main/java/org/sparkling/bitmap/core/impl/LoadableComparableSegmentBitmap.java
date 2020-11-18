@@ -6,7 +6,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class LoadableComparableSegmentBitmap extends LazyLoadSegmentBitmap<BitmapBitwise> implements ComparableBitmap<SegmentedBitmap<BitmapBitwise>, CalculatableSegBitmap<CalculatableBitmap>> {
+
+// todo test
+public class LoadableComparableSegmentBitmap extends LoadableSegmentBitmap<BitmapBitwise> implements ComparableBitmap<SegmentedBitmap<BitmapBitwise>, CalculatableSegBitmap<CalculatableBitmap>> {
 
 
     private static AtomicLong COUNTER = new AtomicLong(0L);
@@ -17,13 +19,12 @@ public class LoadableComparableSegmentBitmap extends LazyLoadSegmentBitmap<Bitma
 
     @Override
     public Iterable<Long> gte(long value) {
-        return makeIterables((segNo, bitmapSeg) -> new AddOffsetIterable(segNo * step(), ((ComparableBitmap) bitmapSeg).gte(value)));
-
+        return null;
     }
 
     @Override
     public Iterable<Long> gt(long value) {
-        return makeIterables((segNo, bitmapSeg) -> new AddOffsetIterable(segNo * step(), ((ComparableBitmap) bitmapSeg).gt(value)));
+        return gte(value + 1);
     }
 
     @Override
@@ -33,88 +34,92 @@ public class LoadableComparableSegmentBitmap extends LazyLoadSegmentBitmap<Bitma
 
     @Override
     public Iterable<Long> lt(long value) {
-        return makeIterables((segNo, bitmapSeg) -> new AddOffsetIterable(segNo * step(), ((ComparableBitmap) bitmapSeg).lt(value)));
+        return makeIterables((segNo, bitmapSeg) -> {
+            long offset = segNo * step();
+            //value =
+            return new AddOffsetIterable(offset, ((ComparableBitmap) bitmapSeg).lt(value));
+        });
     }
 
     @Override
     public Iterable<Long> lte(long value) {
-        return makeIterables((segNo, bitmapSeg) -> new AddOffsetIterable(segNo * step(), ((ComparableBitmap) bitmapSeg).lte(value)));
+        return lt(value + 1);
     }
 
     @Override
     public CalculatableSegBitmap<CalculatableBitmap> gteAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-"+COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) ->  ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).eqAsCalc(value)));
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).eqAsCalc(value)));
         return ret;
     }
 
     @Override
     public CalculatableSegBitmap<CalculatableBitmap> gtAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-"+COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) ->  ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).gtAsCalc(value)));
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).gtAsCalc(value)));
         return ret;
     }
 
     @Override
     public CalculatableSegBitmap<CalculatableBitmap> eqAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-"+COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) ->  ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).eqAsCalc(value)));
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).eqAsCalc(value)));
         return ret;
     }
 
     @Override
     public CalculatableSegBitmap<CalculatableBitmap> ltAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-"+COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) ->  ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).ltAsCalc(value)));
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).ltAsCalc(value)));
         return ret;
     }
 
     @Override
     public CalculatableSegBitmap<CalculatableBitmap> lteAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-"+COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) ->  ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).lteAsCalc(value)));
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).lteAsCalc(value)));
         return ret;
     }
 
 
-    private class CalculatableSegBitmapInner extends BaseSegmentBitmap<CalculatableBitmap> implements CalculatableSegBitmap<CalculatableBitmap>{
+    private class CalculatableSegBitmapInner extends BaseSegmentBitmap<CalculatableBitmap> implements CalculatableSegBitmap<CalculatableBitmap> {
 
         public CalculatableSegBitmapInner(String name, Integer bitmapType, Integer segCount, Long step) {
             super(name, bitmapType, segCount, step);
         }
 
-        public CalculatableBitmap setBitmapSeg(int segNo, CalculatableBitmap unit){
+        public CalculatableBitmap setBitmapSeg(int segNo, CalculatableBitmap unit) {
             return getBitmapMap().put(segNo, unit);
         }
 
         @Override
         public void or(CalculatableSegBitmap<CalculatableBitmap> bitmapUnit) {
-            List<Integer> segList  = getSegNumbers();
-            for(Integer seg : segList){
+            List<Integer> segList = getSegNumbers();
+            for (Integer seg : segList) {
                 getBitmapMap().get(seg).or(bitmapUnit.getBitmapSeg(seg));
             }
         }
 
         @Override
         public void and(CalculatableSegBitmap<CalculatableBitmap> bitmapUnit) {
-            List<Integer> segList  = getSegNumbers();
-            for(Integer seg : segList){
+            List<Integer> segList = getSegNumbers();
+            for (Integer seg : segList) {
                 getBitmapMap().get(seg).and(bitmapUnit.getBitmapSeg(seg));
             }
         }
 
         @Override
         public void andNot(CalculatableSegBitmap<CalculatableBitmap> bitmapUnit) {
-            List<Integer> segList  = getSegNumbers();
-            for(Integer seg : segList){
+            List<Integer> segList = getSegNumbers();
+            for (Integer seg : segList) {
                 getBitmapMap().get(seg).andNot(bitmapUnit.getBitmapSeg(seg));
             }
         }
 
         @Override
         public void xor(CalculatableSegBitmap<CalculatableBitmap> bitmapUnit) {
-            List<Integer> segList  = getSegNumbers();
-            for(Integer seg : segList){
+            List<Integer> segList = getSegNumbers();
+            for (Integer seg : segList) {
                 getBitmapMap().get(seg).xor(bitmapUnit.getBitmapSeg(seg));
             }
         }

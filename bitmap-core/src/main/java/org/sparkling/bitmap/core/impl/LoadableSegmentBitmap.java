@@ -3,12 +3,12 @@ package org.sparkling.bitmap.core.impl;
 import org.sparkling.bitmap.core.IBitmap;
 import org.sparkling.bitmap.core.SegBitmapLoader;
 
-public class LazyLoadSegmentBitmap<T extends IBitmap> extends BaseSegmentBitmap<T> {
+public class LoadableSegmentBitmap<T extends IBitmap> extends BaseSegmentBitmap<T> {
 
     private SegBitmapLoader<T> bitmapLoader;
     private boolean loaded;
 
-    public LazyLoadSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step, SegBitmapLoader<T> bitmapLoader) {
+    public LoadableSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step, SegBitmapLoader<T> bitmapLoader) {
         super(name, bitmapType, segCount, step);
         this.bitmapLoader = bitmapLoader;
         this.loaded = false;

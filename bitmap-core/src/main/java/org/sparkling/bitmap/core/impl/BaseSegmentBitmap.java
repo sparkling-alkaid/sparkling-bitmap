@@ -35,7 +35,7 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
         this.bitmapType = bitmapType;
         this.segCount = segCount;
         this.step = step;
-        this.bitmapMap = Maps.newHashMapWithExpectedSize(bitmapMap.size());
+        this.bitmapMap = Maps.newHashMapWithExpectedSize(segCount);
     }
 
     public BaseSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step, Map<Integer, T> bitmapMap) {

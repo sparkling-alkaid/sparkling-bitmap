@@ -4,13 +4,17 @@ package com.glab.bitmap.test;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 import org.roaringbitmap.RoaringBitmap;
-import org.sparkling.bitmap.core.impl.BitmapOneHot;
+import org.sparkling.bitmap.core.BitmapConst;
+import org.sparkling.bitmap.core.SegBitmapLoader;
+import org.sparkling.bitmap.core.impl.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.Map;
 
 public class BitmapTest {
 
@@ -73,6 +77,84 @@ public class BitmapTest {
 
     }
 
+
+    private BitmapBitwise newBitmapBitwize(){
+        BitmapBitwise b = new BitmapBitwise(10);
+        b.add(1, 10);
+        b.add(2, 20);
+        b.add(30, 300);
+        b.add(4, 40);
+        b.add(50, 500);
+        return b;
+    }
+
+    @Test
+    public void testBitmapBitwize(){
+        BitmapBitwise b = newBitmapBitwize();
+        System.out.println(b.cardinality());
+        System.out.println(b.lt(31));
+        System.out.println(b.eq(10));
+        System.out.println();
+    }
+
+
+    @Test
+    public void testBitmapBitwizeDump() throws Exception{
+        BitmapBitwise b = newBitmapBitwize();
+        File file = createNewFile(PARENT_DIR, "bitwize_test.bitmap");
+        b.dump(new FileOutputStream(file));
+
+        BitmapBitwise load = new BitmapBitwise();
+        load.load(new FileInputStream(file));
+
+        System.out.println(load.cardinality());
+        System.out.println(load.lt(31));
+        System.out.println(load.eq(10));
+        System.out.println();
+    }
+
+
+    @Test
+    public void testSegmentedBitmapOneHot(){
+        int[] indexList = new int[]{12,13};
+        int[] indexList2 = new int[]{223,324};
+        BitmapOneHot oneHot = new BitmapOneHot();
+        oneHot.add(indexList);
+        BitmapOneHot oneHot2 = new BitmapOneHot();
+        oneHot2.add(indexList2);
+        Map<Integer, BitmapOneHot> segMap = new HashMap<>();
+        segMap.put(0, oneHot);
+        segMap.put(1, oneHot2);
+        BaseSegmentBitmap<BitmapOneHot> ret = new BaseSegmentBitmap<BitmapOneHot>("one-hot-seg-bitmap", BitmapConst.BITMAP_TYPE_ONEHOT, 2, 1000L, segMap);
+        ret.add(1238);
+        System.out.println(Lists.newArrayList(ret));
+        System.out.println(ret.getIndexList(3));
+        System.out.println();
+
+    }
+
+
+    @Test
+    public void testSegmentedBitmapBitwise(){
+        Map<Integer, BitmapBitwise> segMap = new HashMap<>();
+        segMap.put(0, newBitmapBitwize());
+        segMap.put(1, newBitmapBitwize());
+        LoadableComparableSegmentBitmap b = new LoadableComparableSegmentBitmap("bit-wise-seg-bitmap", BitmapConst.BITMAP_TYPE_ONEHOT, 2, 1000L, new SegBitmapLoader<BitmapBitwise>() {
+            @Override
+            public BitmapBitwise loadSegment(String name, Integer segIndex) {
+                return segMap.get(segIndex);
+            }
+
+            @Override
+            public BitmapBitwise load(String bitmapName) {
+                return null;
+            }
+        });
+
+        System.out.println(Lists.newArrayList(b.lt(1001L)));
+        System.out.println();
+
+    }
 
     public static void createDir(String parent, String dirPath){
         File dir = new File(parent, dirPath);
