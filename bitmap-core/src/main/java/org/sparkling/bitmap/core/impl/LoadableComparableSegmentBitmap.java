@@ -5,6 +5,7 @@ import org.sparkling.bitmap.core.*;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 
 // todo test
@@ -18,68 +19,36 @@ public class LoadableComparableSegmentBitmap extends LoadableSegmentBitmap<Bitma
     }
 
     @Override
-    public Iterable<Long> gte(long value) {
-        return null;
+    public CalculatableSegBitmapInner gte(long value) {
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((BitmapBitwise) bitmapSeg).gte(value)));
+        return ret;
     }
 
     @Override
-    public Iterable<Long> gt(long value) {
+    public CalculatableSegBitmapInner gt(long value) {
         return gte(value + 1);
     }
 
     @Override
-    public Iterable<Long> eq(long value) {
-        return makeIterables((segNo, bitmapSeg) -> new AddOffsetIterable(segNo * step(), ((ComparableBitmap) bitmapSeg).eq(value)));
+    public CalculatableSegBitmapInner eq(long value) {
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((BitmapBitwise) bitmapSeg).eq(value)));
+        return ret;
     }
 
     @Override
-    public Iterable<Long> lt(long value) {
-        return makeIterables((segNo, bitmapSeg) -> {
-            long offset = segNo * step();
-            //value =
-            return new AddOffsetIterable(offset, ((ComparableBitmap) bitmapSeg).lt(value));
-        });
+    public CalculatableSegBitmapInner lt(long value) {
+        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
+        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((BitmapBitwise) bitmapSeg).lt(value)));
+        return ret;
     }
 
     @Override
-    public Iterable<Long> lte(long value) {
+    public CalculatableSegBitmapInner lte(long value) {
         return lt(value + 1);
     }
 
-    @Override
-    public CalculatableSegBitmap<CalculatableBitmap> gteAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).eqAsCalc(value)));
-        return ret;
-    }
-
-    @Override
-    public CalculatableSegBitmap<CalculatableBitmap> gtAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).gtAsCalc(value)));
-        return ret;
-    }
-
-    @Override
-    public CalculatableSegBitmap<CalculatableBitmap> eqAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).eqAsCalc(value)));
-        return ret;
-    }
-
-    @Override
-    public CalculatableSegBitmap<CalculatableBitmap> ltAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).ltAsCalc(value)));
-        return ret;
-    }
-
-    @Override
-    public CalculatableSegBitmap<CalculatableBitmap> lteAsCalc(long value) {
-        CalculatableSegBitmapInner ret = new CalculatableSegBitmapInner("calc-result-" + COUNTER.incrementAndGet(), bitmapType(), getSegCount(), step());
-        segOperations((segNo, bitmapSeg) -> ret.setBitmapSeg(segNo, ((ComparableBitmap) bitmapSeg).lteAsCalc(value)));
-        return ret;
-    }
 
 
     private class CalculatableSegBitmapInner extends BaseSegmentBitmap<CalculatableBitmap> implements CalculatableSegBitmap<CalculatableBitmap> {

@@ -196,30 +196,30 @@ public class BitmapBitwise implements IBitmap2D<BitmapBitwise, BitmapUnit> {
     }
 
 
-    @Override
-    public BitmapUnit gteAsCalc(long value) {
-        return gte(value);
-    }
-
-    @Override
-    public BitmapUnit gtAsCalc(long value) {
-        return gt(value);
-    }
-
-    @Override
-    public BitmapUnit eqAsCalc(long value) {
-        return eq(value);
-    }
-
-    @Override
-    public BitmapUnit ltAsCalc(long value) {
-        return lt(value);
-    }
-
-    @Override
-    public BitmapUnit lteAsCalc(long value) {
-        return lte(value);
-    }
+//    @Override
+//    public BitmapUnit gteAsCalc(long value) {
+//        return gte(value);
+//    }
+//
+//    @Override
+//    public BitmapUnit gtAsCalc(long value) {
+//        return gt(value);
+//    }
+//
+//    @Override
+//    public BitmapUnit eqAsCalc(long value) {
+//        return eq(value);
+//    }
+//
+//    @Override
+//    public BitmapUnit ltAsCalc(long value) {
+//        return lt(value);
+//    }
+//
+//    @Override
+//    public BitmapUnit lteAsCalc(long value) {
+//        return lte(value);
+//    }
 
     public BitmapUnit gte(long value) {
         return Bitmaps.unitAndNot(notNullBitmap, lt(value));

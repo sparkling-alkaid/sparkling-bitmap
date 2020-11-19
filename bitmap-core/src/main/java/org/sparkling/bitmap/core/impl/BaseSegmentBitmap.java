@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 
 /**
@@ -30,7 +31,7 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
     private Long step;
     private Map<Integer, T> bitmapMap;
 
-    protected BaseSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step){
+    protected BaseSegmentBitmap(String name, Integer bitmapType, Integer segCount, Long step) {
         this.name = name;
         this.bitmapType = bitmapType;
         this.segCount = segCount;
@@ -44,7 +45,7 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
     }
 
 
-    protected Integer getSegCount(){
+    protected Integer getSegCount() {
         return segCount;
     }
 
@@ -149,11 +150,11 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
     }
 
 
-    protected List<Integer> getSegNumbers(){
-        return bitmapMap.keySet().stream().filter(a -> a >= 0).collect(Collectors.toList());
+    protected List<Integer> getSegNumbers() {
+        return IntStream.range(0, segCount).boxed().collect(Collectors.toList());
     }
 
-    protected Iterator<Long> makeIterators(SegmentOperation<Iterator<Long>> operation){
+    protected Iterator<Long> makeIterators(SegmentOperation<Iterator<Long>> operation) {
         List<Integer> segNumbers = getSegNumbers();
         List<Iterator<Long>> iterators = new ArrayList<>(segNumbers.size());
         for (Integer segNo : segNumbers) {
@@ -162,7 +163,7 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
         return Iterators.concat(iterators.iterator());
     }
 
-    protected Iterable<Long> makeIterables(SegmentOperation<Iterable<Long>> operation){
+    protected Iterable<Long> makeIterables(SegmentOperation<Iterable<Long>> operation) {
         List<Integer> segNumbers = getSegNumbers();
         List<Iterable<Long>> iterables = new ArrayList<>(segNumbers.size());
         for (Integer segNo : segNumbers) {
@@ -171,13 +172,12 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
         return Iterables.concat(iterables);
     }
 
-    protected void segOperations(SegmentOperation<?> operation){
+    protected void segOperations(SegmentOperation<?> operation) {
         List<Integer> segNumbers = getSegNumbers();
         for (Integer segNo : segNumbers) {
             operation.apply(segNo, getBitmapSeg(segNo));
         }
     }
-
 
 
     @FunctionalInterface
@@ -199,6 +199,9 @@ public class BaseSegmentBitmap<T extends IBitmap> implements SegmentedBitmap<T> 
 
         @Override
         public boolean hasNext() {
+            if (wrapped == null) {
+                return false;
+            }
             return wrapped.hasNext();
         }
 

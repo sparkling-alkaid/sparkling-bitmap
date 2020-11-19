@@ -15,7 +15,7 @@ public class LoadableSegmentBitmap<T extends IBitmap> extends BaseSegmentBitmap<
     }
 
 
-    private boolean isLoaded() {
+    protected boolean isLoaded() {
         if (loaded) {
             return true;
         }
@@ -26,6 +26,7 @@ public class LoadableSegmentBitmap<T extends IBitmap> extends BaseSegmentBitmap<
         return false;
     }
 
+
     @Override
     public T getBitmapSeg(int segNo) {
         if (isLoaded() || getBitmapMap().containsKey(segNo)) {
@@ -35,6 +36,7 @@ public class LoadableSegmentBitmap<T extends IBitmap> extends BaseSegmentBitmap<
         getBitmapMap().put(segNo, bitmap);
         return bitmap;
     }
+
 
 
 

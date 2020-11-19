@@ -149,9 +149,14 @@ public class BitmapTest {
             public BitmapBitwise load(String bitmapName) {
                 return null;
             }
+
+            @Override
+            public Map<Integer, BitmapBitwise> loadAllSeg(String name) {
+                return segMap;
+            }
         });
 
-        System.out.println(Lists.newArrayList(b.lt(1001L)));
+        System.out.println(Lists.newArrayList(b.lt(300)));
         System.out.println();
 
     }
